@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deudas Familiares</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #2d3748; }
+
+  header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white; padding: 32px 40px 24px;
+  }
+  header h1 { font-size: 2rem; font-weight: 700; }
+  header p { opacity: 0.85; margin-top: 4px; font-size: 0.95rem; }
+
+  .container { max-width: 1150px; margin: 0 auto; padding: 28px 20px; }
+
+  /* PRINCIPIOS */
+  .principios-box { background: white; border-radius: 14px; padding: 24px 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 28px; }
+  .principios-box h2 { font-size: 1.05rem; font-weight: 700; color: #4a5568; margin-bottom: 16px; }
+  .principios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .principio { display: flex; gap: 12px; align-items: flex-start; background: #f7fafc; border-radius: 10px; padding: 12px 14px; }
+  .p-num { background: #667eea; color: white; border-radius: 50%; width: 24px; height: 24px; min-width: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; }
+  .p-text { font-size: 0.84rem; color: #4a5568; line-height: 1.5; }
+  .p-text strong { color: #2d3748; }
+
+  /* CARDS */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 28px; }
+  .card { background: white; border-radius: 14px; padding: 18px 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); border-top: 5px solid var(--color); }
+  .card .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #718096; }
+  .card .amount { font-size: 1.55rem; font-weight: 800; color: var(--color); margin: 4px 0; }
+  .card .sub { font-size: 0.78rem; color: #a0aec0; }
+  .card-papa   { --color: #4299e1; }
+  .card-mama   { --color: #ed64a6; }
+  .card-tio    { --color: #e67e22; }
+  .card-total  { --color: #805ad5; }
+  .card-fin    { --color: #38a169; }
+
+  /* PLAN */
+  .plan-box { background: white; border-radius: 14px; padding: 24px 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 28px; }
+  .plan-box h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 18px; color: #4a5568; }
+
+  .phase { margin-bottom: 20px; }
+  .phase-title {
+    font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 4px 10px; border-radius: 6px; display: inline-block; margin-bottom: 10px;
+  }
+  .phase-1 { background: #fef3c7; color: #92400e; }
+  .phase-2 { background: #d1fae5; color: #065f46; }
+  .phase-3 { background: #dbeafe; color: #1e40af; }
+
+  .plan-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .plan-label { width: 55px; font-weight: 600; font-size: 0.85rem; }
+  .bar-wrap { flex: 1; background: #edf2f7; border-radius: 99px; height: 16px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 99px; }
+  .bar-papa { background: linear-gradient(90deg, #4299e1, #63b3ed); }
+  .bar-mama { background: linear-gradient(90deg, #ed64a6, #f687b3); }
+  .bar-tio  { background: linear-gradient(90deg, #e67e22, #f39c12); }
+  .plan-val { font-size: 0.82rem; color: #4a5568; min-width: 160px; text-align: right; }
+
+  /* CUOTAS TABLE */
+  .cuotas-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 0.84rem; }
+  .cuotas-table thead th { background: #f7fafc; padding: 9px 12px; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: #718096; border-bottom: 2px solid #e2e8f0; }
+  .cuotas-table tbody td { padding: 10px 12px; border-bottom: 1px solid #f0f4f8; }
+  .cuotas-table tbody tr:last-child td { border-bottom: 2px solid #e2e8f0; }
+  .cuotas-table small { font-weight: 400; color: #a0aec0; font-size: 0.72rem; display: block; }
+
+  /* TIMELINE */
+  .timeline-wrap { margin-top: 20px; }
+  .timeline-wrap h3 { font-size: 0.85rem; font-weight: 700; color: #718096; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .timeline-scroll { display: flex; flex-wrap: wrap; gap: 5px; }
+  .mc {
+    padding: 5px 9px; border-radius: 8px; font-size: 0.7rem; font-weight: 600;
+    text-align: center; min-width: 70px; line-height: 1.4;
+  }
+  .mc small { display: block; font-weight: 400; font-size: 0.65rem; opacity: 0.85; }
+  .mc.mama-paid { background: #fed7e2; color: #97266d; }
+  .mc.papa      { background: #bee3f8; color: #2b6cb0; }
+  .mc.tio       { background: #fde8d0; color: #9c4221; }
+  .mc.both      { background: #e9d8fd; color: #553c9a; }
+  .mc.papa-done { background: #c6f6d5; color: #276749; }
+  .mc.tio-done  { background: #fef9c3; color: #713f12; }
+  .mc.phase-sep { background: #1a202c; color: #e2e8f0; }
+
+  /* MILESTONE */
+  .milestones { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 20px; }
+  .milestone {
+    display: flex; align-items: center; gap: 14px;
+    background: white; border-radius: 14px; padding: 14px 20px;
+    border: 2px solid var(--mc);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    min-width: 180px;
+  }
+  .milestone .icon { font-size: 1.5rem; }
+  .milestone .info .who { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #718096; }
+  .milestone .info .date { font-size: 1.4rem; font-weight: 900; color: var(--mc); line-height: 1.1; margin: 2px 0; }
+  .milestone .info .detail { font-size: 0.75rem; color: #a0aec0; }
+  .ms-mama  { --mc: #ed64a6; }
+  .ms-papa  { --mc: #4299e1; }
+  .ms-tio   { --mc: #e67e22; }
+
+  /* TABLE */
+  .table-box { background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; }
+  .table-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 12px; flex-wrap: wrap; gap: 10px; }
+  .table-header h2 { font-size: 1.05rem; font-weight: 700; color: #4a5568; }
+  .filter-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-btn { padding: 4px 12px; border-radius: 99px; border: 2px solid; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all .2s; background: white; }
+  .filter-btn.all  { border-color: #805ad5; color: #805ad5; }
+  .filter-btn.papa { border-color: #4299e1; color: #4299e1; }
+  .filter-btn.mama { border-color: #ed64a6; color: #ed64a6; }
+  .filter-btn.tio  { border-color: #e67e22; color: #e67e22; }
+  .filter-btn.active.all  { background: #805ad5; color: white; }
+  .filter-btn.active.papa { background: #4299e1; color: white; }
+  .filter-btn.active.mama { background: #ed64a6; color: white; }
+  .filter-btn.active.tio  { background: #e67e22; color: white; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #f7fafc; padding: 10px 14px; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #718096; cursor: pointer; user-select: none; white-space: nowrap; }
+  thead th:hover { background: #edf2f7; }
+  thead th.sorted .si { opacity: 1 !important; }
+  .si { margin-left: 4px; opacity: 0.35; }
+  tbody tr { border-top: 1px solid #f0f4f8; transition: background .15s; }
+  tbody tr:hover { background: #f7fafc; }
+  tbody td { padding: 10px 14px; font-size: 0.86rem; }
+  tfoot td { padding: 12px 14px; font-weight: 700; background: #f7fafc; border-top: 2px solid #e2e8f0; }
+
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; }
+  .badge-papa { background: #bee3f8; color: #2b6cb0; }
+  .badge-mama { background: #fed7e2; color: #97266d; }
+  .badge-tio  { background: #fde8d0; color: #9c4221; }
+  .badge-nc   { background: #e2e8f0; color: #718096; font-size: 0.68rem; }
+  .tipo-tag   { font-size: 0.7rem; padding: 1px 7px; border-radius: 4px; background: #edf2f7; color: #4a5568; display: inline-block; }
+
+  .amount-cell { font-weight: 700; text-align: right; }
+  .amount-papa { color: #3182ce; }
+  .amount-mama { color: #d53f8c; }
+  .amount-tio  { color: #c05621; }
+  .amount-nc   { color: #a0aec0; text-decoration: line-through; }
+
+  .note-usd { font-size: 0.72rem; color: #a0aec0; display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Deudas Familiares</h1>
+  <p>Plan escalable · Fase 1: 1.500 €/mes (may–ago 2026) · Fase 2: 2.000 €/mes (sep 2026+) · 1 € = 1,08 USD</p>
+</header>
+
+<div class="container">
+
+  <!-- PRINCIPIOS -->
+  <div class="principios-box">
+    <h2>📋 Principios del Plan de Repago</h2>
+    <div class="principios-grid">
+      <div class="principio">
+        <div class="p-num">1</div>
+        <div class="p-text"><strong>Mamá tiene prioridad absoluta</strong> — se repaga íntegramente en el primer mes (mayo 2026) antes que ningún otro acreedor.</div>
+      </div>
+      <div class="principio">
+        <div class="p-num">2</div>
+        <div class="p-text"><strong>Fase 1 reducida (may–ago 2026)</strong> — pagos menores para hacer hucha y poder visitar a los niños antes del verano. En verano no hay desplazamiento a NY.</div>
+      </div>
+      <div class="principio">
+        <div class="p-num">3</div>
+        <div class="p-text"><strong>Fase 2 desde septiembre 2026</strong> — los pagos suben al ritmo normal. Tío recibe el <strong>78% (2.200€)</strong> y Papá el <strong>22% (600€)</strong> de la cuota mensual.</div>
+      </div>
+      <div class="principio">
+        <div class="p-num">4</div>
+        <div class="p-text"><strong>Bonus corporativo</strong> — el 100% del importe va primero a saldar la deuda con Tío y, una vez liquidada, el remanente a Papá.</div>
+      </div>
+      <div class="principio">
+        <div class="p-num">5</div>
+        <div class="p-text"><strong>Tipo de cambio fijo</strong> — la deuda con Tío (50.000 USD) se calcula a <strong>1 € = 1,08 USD</strong> (46.296,30 €). No se reajusta por fluctuaciones.</div>
+      </div>
+      <div class="principio">
+        <div class="p-num">6</div>
+        <div class="p-text"><strong>Objetivo: mayo 2028</strong> — Tío liquidado en <strong>marzo 2028</strong>, Papá liquidado en <strong>mayo 2028</strong>. Total 25 meses desde el inicio del plan.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARDS -->
+  <div class="cards">
+    <div class="card card-papa">
+      <div class="label">Papá</div>
+      <div class="amount">19.876,30 €</div>
+      <div class="sub">12 operaciones</div>
+    </div>
+    <div class="card card-mama">
+      <div class="label">Mamá</div>
+      <div class="amount">420,16 €</div>
+      <div class="sub">Prioridad · saldada may 2026</div>
+    </div>
+    <div class="card card-tio">
+      <div class="label">Tío</div>
+      <div class="amount">46.296,30 €</div>
+      <div class="sub">50.000 USD · tipo 1,08</div>
+    </div>
+    <div class="card card-total">
+      <div class="label">Total a devolver</div>
+      <div class="amount">66.592,76 €</div>
+      <div class="sub">Todas las deudas computables</div>
+    </div>
+    <div class="card card-fin">
+      <div class="label">Fin previsto</div>
+      <div class="amount">May 2028</div>
+      <div class="sub">Papá · 25 meses en total</div>
+    </div>
+  </div>
+
+  <!-- PLAN -->
+  <div class="plan-box">
+    <h2>Plan de Devolución Escalable</h2>
+
+    <!-- TABLA RESUMEN CUOTAS -->
+    <table class="cuotas-table">
+      <thead>
+        <tr>
+          <th>Fase</th>
+          <th>Período</th>
+          <th>Meses</th>
+          <th style="color:#ed64a6">Mamá</th>
+          <th style="color:#4299e1">Papá</th>
+          <th style="color:#e67e22">Tío</th>
+          <th>Total/mes</th>
+          <th>% neto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="phase-title phase-1" style="font-size:0.72rem;padding:2px 8px">Fase 1</span></td>
+          <td>May–Ago 2026</td>
+          <td>4</td>
+          <td style="color:#ed64a6;font-weight:700">420 € <small>(may, prioritaria)</small></td>
+          <td style="color:#4299e1;font-weight:700">1.000 €/mes</td>
+          <td style="color:#e67e22;font-weight:700">1.500 €/mes</td>
+          <td><strong>2.500 €</strong></td>
+          <td>35%</td>
+        </tr>
+        <tr>
+          <td><span class="phase-title phase-2" style="font-size:0.72rem;padding:2px 8px">Fase 2</span></td>
+          <td>Sep 2026–Mar 2028</td>
+          <td>19</td>
+          <td style="color:#a0aec0">—</td>
+          <td style="color:#4299e1;font-weight:700">22% · 600 €/mes</td>
+          <td style="color:#e67e22;font-weight:700">78% · 2.200 €/mes</td>
+          <td><strong>2.800 €</strong></td>
+          <td>39%</td>
+        </tr>
+        <tr>
+          <td><span class="phase-title phase-3" style="font-size:0.72rem;padding:2px 8px">Fase 3</span></td>
+          <td>Abr–May 2028</td>
+          <td>2</td>
+          <td style="color:#a0aec0">—</td>
+          <td style="color:#4299e1;font-weight:700">2.500 €/mes</td>
+          <td style="color:#a0aec0">— (saldado)</td>
+          <td><strong>2.500 €</strong></td>
+          <td>35%</td>
+        </tr>
+        <tr style="background:#f7fafc;font-weight:700">
+          <td colspan="2">Total pagado</td>
+          <td>25</td>
+          <td style="color:#ed64a6">420,16 €</td>
+          <td style="color:#4299e1">19.876,30 €</td>
+          <td style="color:#e67e22">46.296,30 €</td>
+          <td style="color:#805ad5">66.592,76 €</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="phase">
+      <div class="phase-title phase-1">Fase 1 · May–Ago 2026 · 2.500 €/mes total</div>
+      <div class="plan-row">
+        <div class="plan-label" style="color:#ed64a6">Mamá</div>
+        <div class="bar-wrap"><div class="bar-fill bar-mama" style="width:100%"></div></div>
+        <div class="plan-val">420,16 € saldada en mayo · prioridad</div>
+      </div>
+      <div class="plan-row">
+        <div class="plan-label" style="color:#4299e1">Papá</div>
+        <div class="bar-wrap"><div class="bar-fill bar-papa" style="width:33%"></div></div>
+        <div class="plan-val">79,84 € may + 500 €/mes jun–ago</div>
+      </div>
+      <div class="plan-row">
+        <div class="plan-label" style="color:#e67e22">Tío</div>
+        <div class="bar-wrap"><div class="bar-fill bar-tio" style="width:67%"></div></div>
+        <div class="plan-val">1.000 €/mes · 4 meses</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-title phase-2">Fase 2 · Sep 2026–Mar 2028 · 2.800 €/mes total · 39% neto</div>
+      <div class="plan-row">
+        <div class="plan-label" style="color:#e67e22">Tío</div>
+        <div class="bar-wrap"><div class="bar-fill bar-tio" style="width:78%"></div></div>
+        <div class="plan-val">78% · 2.200 €/mes → liquidado mar 2028</div>
+      </div>
+      <div class="plan-row">
+        <div class="plan-label" style="color:#4299e1">Papá</div>
+        <div class="bar-wrap"><div class="bar-fill bar-papa" style="width:22%"></div></div>
+        <div class="plan-val">22% · 600 €/mes</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-title phase-3">Fase 3 · Abr–May 2028 · 2.500 €/mes · 35% neto</div>
+      <div class="plan-row">
+        <div class="plan-label" style="color:#4299e1">Papá</div>
+        <div class="bar-wrap"><div class="bar-fill bar-papa" style="width:100%"></div></div>
+        <div class="plan-val">2.500 €/mes → liquidado may 2028</div>
+      </div>
+      <div class="plan-row">
+        <div class="plan-label" style="color:#e67e22">Tío</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:0%;background:#edf2f7"></div></div>
+        <div class="plan-val" style="color:#a0aec0">— saldado mar 2028</div>
+      </div>
+    </div>
+
+    <!-- HITOS -->
+    <div class="milestones">
+      <div class="milestone ms-mama">
+        <div class="icon">🌸</div>
+        <div class="info">
+          <div class="who">Mamá · liquidada</div>
+          <div class="date">May 2026</div>
+          <div class="detail">420,16 € · último pago</div>
+        </div>
+      </div>
+      <div class="milestone ms-tio">
+        <div class="icon">🟠</div>
+        <div class="info">
+          <div class="who">Tío · liquidado</div>
+          <div class="date">Mar 2028</div>
+          <div class="detail">696 € · último pago</div>
+        </div>
+      </div>
+      <div class="milestone ms-papa">
+        <div class="icon">🔵</div>
+        <div class="info">
+          <div class="who">Papá · liquidado</div>
+          <div class="date">May 2028</div>
+          <div class="detail">2.396 € · último pago</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="timeline-wrap">
+      <h3>Timeline mes a mes</h3>
+      <div class="timeline-scroll">
+        <!-- FASE 1: 2.500€/mes -->
+        <div class="mc mama-paid" title="Mamá: 420€ ✓ · Papá: 580€ · Tío: 1.500€ · Total: 2.500€">May 26<br><small>Mamá ✓<br>2.500€</small></div>
+        <div class="mc both" title="Papá: 1.000€ · Tío: 1.500€ · Total: 2.500€">Jun 26<br><small>P:1.000<br>T:1.500</small></div>
+        <div class="mc both" title="Papá: 1.000€ · Tío: 1.500€ · Total: 2.500€">Jul 26<br><small>P:1.000<br>T:1.500</small></div>
+        <div class="mc both" title="Papá: 1.000€ · Tío: 1.500€ · Total: 2.500€">Ago 26<br><small>P:1.000<br>T:1.500</small></div>
+        <!-- SEPARADOR FASE 2 -->
+        <div class="mc phase-sep">Fase 2<br><small>3.260€</small></div>
+        <!-- FASE 2: 2.800€/mes (Tío 2.200 + Papá 600) -->
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 38.096€ · Pdte Papá: 15.696€">Sep 26<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 35.896€ · Pdte Papá: 15.096€">Oct 26<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 33.696€ · Pdte Papá: 14.496€">Nov 26<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 31.496€ · Pdte Papá: 13.896€">Dic 26<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 29.296€ · Pdte Papá: 13.296€">Ene 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 27.096€ · Pdte Papá: 12.696€">Feb 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 24.896€ · Pdte Papá: 12.096€">Mar 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 22.696€ · Pdte Papá: 11.496€">Abr 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 20.496€ · Pdte Papá: 10.896€">May 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 18.296€ · Pdte Papá: 10.296€">Jun 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 16.096€ · Pdte Papá: 9.696€">Jul 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 13.896€ · Pdte Papá: 9.096€">Ago 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 11.696€ · Pdte Papá: 8.496€">Sep 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 9.496€ · Pdte Papá: 7.896€">Oct 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 7.296€ · Pdte Papá: 7.296€">Nov 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 5.096€ · Pdte Papá: 6.696€">Dic 27<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 2.896€ · Pdte Papá: 6.096€">Ene 28<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc both" title="Tío: 2.200€ · Papá: 600€ · Pdte Tío: 696€ · Pdte Papá: 5.496€">Feb 28<br><small>T:2.200<br>P:600</small></div>
+        <div class="mc tio-done" title="Tío: 696€ ÚLTIMO PAGO ✓ · Papá: 600€ · Pdte Papá: 4.896€">Mar 28<br><small>Tío ✓<br>P:600</small></div>
+        <!-- SEPARADOR FASE 3 -->
+        <div class="mc phase-sep">Fase 3<br><small>2.500€</small></div>
+        <!-- FASE 3: 2.500€/mes solo Papá -->
+        <div class="mc papa" title="Solo Papá: 2.500€ · Pendiente: 2.396€">Abr 28<br><small>P:2.500</small></div>
+        <div class="mc papa-done" title="Papá: 2.396€ ÚLTIMO PAGO ✓ · TODAS LAS DEUDAS SALDADAS">May 28<br><small>Papá ✓</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-box">
+    <div class="table-header">
+      <h2>Todas las operaciones</h2>
+      <div class="filter-btns">
+        <button class="filter-btn all active" onclick="filterTable('all',this)">Todas</button>
+        <button class="filter-btn papa" onclick="filterTable('papa',this)">Papá</button>
+        <button class="filter-btn mama" onclick="filterTable('mama',this)">Mamá</button>
+        <button class="filter-btn tio" onclick="filterTable('tio',this)">Tío</button>
+      </div>
+    </div>
+    <table id="deudaTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">Fecha<span class="si">↕</span></th>
+          <th onclick="sortTable(1)">Concepto<span class="si">↕</span></th>
+          <th onclick="sortTable(2)">Tipo<span class="si">↕</span></th>
+          <th onclick="sortTable(3)">Persona<span class="si">↕</span></th>
+          <th onclick="sortTable(4)" style="text-align:right">Importe EUR<span class="si">↕</span></th>
+          <th onclick="sortTable(5)">Estado<span class="si">↕</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- PAPÁ -->
+        <tr data-persona="papa"><td>31/03/2025</td><td>Préstamo</td><td><span class="tipo-tag">Transferencia</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="5000">5.000,00 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>29/04/2025</td><td>Gastos</td><td><span class="tipo-tag">Transferencia</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="300">300,00 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>30/04/2025</td><td>Gastos</td><td><span class="tipo-tag">Transferencia</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="1500">1.500,00 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>01/05/2025</td><td>Cargo tarjeta (único autorizado)</td><td><span class="tipo-tag">Cargo</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="389.04">389,04 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>05/05/2025</td><td>Factura Arzan</td><td><span class="tipo-tag">Factura</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="9877.52">9.877,52 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>06/05/2025</td><td>Regalo Santo de Marcos</td><td><span class="tipo-tag">Regalo</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-nc" data-val="70">70,00 €</td><td><span class="badge badge-nc">No computa</span></td></tr>
+        <tr data-persona="papa"><td>23/05/2025</td><td>Pago Terapeuta</td><td><span class="tipo-tag">Transferencia</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="300">300,00 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>17/06/2025</td><td>Bizum (prueba)</td><td><span class="tipo-tag">Bizum</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="0.5">0,50 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>26/11/2025</td><td>Cargo tarjeta</td><td><span class="tipo-tag">Cargo</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="310.10">310,10 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>09/12/2025</td><td>Regalo Cumpleaños Marcos</td><td><span class="tipo-tag">Regalo</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-nc" data-val="85">85,00 €</td><td><span class="badge badge-nc">No computa</span></td></tr>
+        <tr data-persona="papa"><td>22/12/2025</td><td>Regalo Navidad Familiar</td><td><span class="tipo-tag">Regalo</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-nc" data-val="1000">1.000,00 €</td><td><span class="badge badge-nc">No computa</span></td></tr>
+        <tr data-persona="papa"><td>20/01/2026</td><td>Cargo tarjeta</td><td><span class="tipo-tag">Cargo</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="310.10">310,10 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>10/02/2026</td><td>Transferencia</td><td><span class="tipo-tag">Transferencia</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="1000">1.000,00 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>23/02/2026</td><td>Bizum Gastos</td><td><span class="tipo-tag">Bizum</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="500">500,00 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="papa"><td>30/03/2026</td><td>Cargo tarjeta</td><td><span class="tipo-tag">Cargo</span></td><td><span class="badge badge-papa">Papá</span></td><td class="amount-cell amount-papa" data-val="389.04">389,04 €</td><td>✅ Computa</td></tr>
+        <!-- MAMÁ -->
+        <tr data-persona="mama"><td>20/02/2026</td><td>Bizum</td><td><span class="tipo-tag">Bizum</span></td><td><span class="badge badge-mama">Mamá</span></td><td class="amount-cell amount-nc" data-val="20">20,00 €</td><td><span class="badge badge-nc">Repagado</span></td></tr>
+        <tr data-persona="mama"><td>26/02/2026</td><td>Zapatos Fluchos</td><td><span class="tipo-tag">Compra</span></td><td><span class="badge badge-mama">Mamá</span></td><td class="amount-cell amount-mama" data-val="115">115,00 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="mama"><td>26/02/2026</td><td>Adidas Samba</td><td><span class="tipo-tag">Compra</span></td><td><span class="badge badge-mama">Mamá</span></td><td class="amount-cell amount-mama" data-val="119">119,00 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="mama"><td>28/02/2026</td><td>Bizum</td><td><span class="tipo-tag">Bizum</span></td><td><span class="badge badge-mama">Mamá</span></td><td class="amount-cell amount-mama" data-val="50">50,00 €</td><td>✅ Computa</td></tr>
+        <tr data-persona="mama"><td>18/02/2026</td><td>Jerseys y camisas</td><td><span class="tipo-tag">Compra</span></td><td><span class="badge badge-mama">Mamá</span></td><td class="amount-cell amount-mama" data-val="136.16">136,16 €</td><td>✅ Computa</td></tr>
+        <!-- TÍO -->
+        <tr data-persona="tio"><td>—</td><td>Deuda total<span class="note-usd">50.000 USD · tipo fijo 1,08</span></td><td><span class="tipo-tag">Préstamo</span></td><td><span class="badge badge-tio">Tío</span></td><td class="amount-cell amount-tio" data-val="46296.30">46.296,30 €</td><td>✅ Computa</td></tr>
+      </tbody>
+      <tfoot>
+        <tr id="footerRow">
+          <td colspan="4">Total a devolver (operaciones computables)</td>
+          <td style="text-align:right; color:#805ad5; font-size:1.05rem" id="footerAmount">66.592,76 €</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  let sortDir = {};
+
+  function sortTable(col) {
+    const table = document.getElementById('deudaTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const th = table.querySelectorAll('thead th')[col];
+    sortDir[col] = !sortDir[col];
+    table.querySelectorAll('thead th').forEach(t => t.classList.remove('sorted'));
+    th.classList.add('sorted');
+    th.querySelector('.si').textContent = sortDir[col] ? '↑' : '↓';
+    rows.sort((a, b) => {
+      let aVal = col === 4 ? parseFloat(a.cells[col].dataset.val || 0) : a.cells[col].textContent.trim();
+      let bVal = col === 4 ? parseFloat(b.cells[col].dataset.val || 0) : b.cells[col].textContent.trim();
+      if (aVal < bVal) return sortDir[col] ? -1 : 1;
+      if (aVal > bVal) return sortDir[col] ? 1 : -1;
+      return 0;
+    });
+    rows.forEach(r => tbody.appendChild(r));
+    updateFooter();
+  }
+
+  function filterTable(persona, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#deudaTable tbody tr').forEach(row => {
+      row.style.display = (persona === 'all' || row.dataset.persona === persona) ? '' : 'none';
+    });
+    updateFooter(persona);
+  }
+
+  function updateFooter(persona = 'all') {
+    let total = 0;
+    document.querySelectorAll('#deudaTable tbody tr').forEach(row => {
+      if (persona !== 'all' && row.dataset.persona !== persona) return;
+      const cell = row.cells[4];
+      if (!cell.classList.contains('amount-nc')) total += parseFloat(cell.dataset.val || 0);
+    });
+    document.getElementById('footerAmount').textContent =
+      total.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  }
+</script>
+</body>
+</html>
